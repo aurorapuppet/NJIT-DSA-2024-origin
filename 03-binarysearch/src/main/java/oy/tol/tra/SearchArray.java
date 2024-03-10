@@ -28,6 +28,7 @@ public class SearchArray {
       }
       return -1;
    }
+   
 
    /**
     * Finds a String from the specified array using linear search, -1 if one could not be found.
