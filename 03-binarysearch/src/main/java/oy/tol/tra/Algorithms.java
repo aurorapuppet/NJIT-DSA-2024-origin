@@ -66,7 +66,7 @@ public class Algorithms {
        quickSort(array, start, pivotIndex - 1);
        quickSort(array, pivotIndex + 1, end);
     }
-    
+
    }
     private static int partition(String[] array, int start, int end){
         String pivot = array[end];
