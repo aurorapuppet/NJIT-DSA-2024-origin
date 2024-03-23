@@ -61,5 +61,40 @@ public class ParenthesisChecker {
       //         throw an exception, wrong kind of parenthesis were in the text (e.g. "asfa ( asdf } sadf")
       // if the stack is not empty after all the characters have been handled
       //   throw an exception since the string has more opening than closing parentheses.
+        int parenthesesCount = 0;
+
+        for (int i = 0; i < fromString.length(); i++) {
+            char currentChar = fromString.charAt(i);
+
+            if (currentChar == '(' || currentChar == '[' || currentChar == '{') {
+                // Opening parenthesis found, push onto the stack
+                try {
+                    stack.push(currentChar);
+                    parenthesesCount++;
+                } catch (StackAllocationException e) {
+                    throw new ParenthesesException("Error pushing onto the stack: " + e.getMessage(), ParenthesesException.STACK_FAILURE);
+                }
+            } else if (currentChar == ')' || currentChar == ']' || currentChar == '}') {
+                // Closing parenthesis found, check matching with top of stack
+                if (stack.isEmpty()) {
+                    throw new ParenthesesException("Too many closing parentheses. No matching opening parenthesis found.", ParenthesesException.TOO_MANY_CLOSING_PARENTHESES);
+                }
+
+                char topOfStack = stack.pop();
+                parenthesesCount++;
+
+                if ((currentChar == ')' && topOfStack != '(') ||
+                        (currentChar == ']' && topOfStack != '[') ||
+                        (currentChar == '}' && topOfStack != '{')) {
+                    throw new ParenthesesException("Wrong kind of parenthesis in the text.", ParenthesesException.PARENTHESES_IN_WRONG_ORDER);
+                }
+            }
+        }
+
+        if (!stack.isEmpty()) {
+            throw new ParenthesesException("Too few closing parentheses. Some opening parentheses are not closed.", ParenthesesException.TOO_FEW_CLOSING_PARENTHESES);
+        }
+
+        return parenthesesCount;
    }
 }

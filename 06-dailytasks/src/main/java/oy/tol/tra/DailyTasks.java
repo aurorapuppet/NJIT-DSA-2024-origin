@@ -1,6 +1,7 @@
 package oy.tol.tra;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,29 +28,28 @@ public class DailyTasks {
 
    private void run() {
       try {
-         // TODO:
-         // 1. create a queue (to the member variable!) for daily tasks, which are strings.
-         
-         // 2. read the tasks for today by calling readTasks() -- implementing missing parts of it!
-         
-         // 3. create Java Timer object (to member variable) to schedule your daily tasks. (Already given to you.)
+         dailyTaskQueue = new QueueImplementation<>(10); // Initialize with an initial capacity of 10
+         readTasks();
          timer = new Timer();
-         // 4. schedule the timer at fixed rate with a new TimerTask,
-         //  using the delay constant values in the class member variable. (Already given to you.)
          timer.scheduleAtFixedRate(new TimerTask() {
-            // 4.1 in the timer task run:
             @Override
             public void run() {
-               // 4.1.1 check if there are tasks in the queue:
-               
-                  // 4.1.2 if yes, print the task from the queue, dequeueing it.
-                  
-                  // 4.1.3 if not, cancel the timer.
-               
+               if (!dailyTaskQueue.isEmpty()) {
+                  try {
+                     System.out.println(dailyTaskQueue.dequeue());
+                  } catch (QueueIsEmptyException e) {
+                     System.out.println("Queue is empty.");
+                     timer.cancel();
+                  }
+               } else {
+                  timer.cancel();
+               }
             }
          }, TASK_DELAY_IN_SECONDS, TASK_DELAY_IN_SECONDS);
       } catch (IOException e) {
          System.out.println("Something went wrong :( " + e.getLocalizedMessage());
+      } catch (QueueAllocationException | NullPointerException e) {
+         System.out.println("Error initializing the queue: " + e.getMessage());
       }
    }
 
@@ -59,9 +59,13 @@ public class DailyTasks {
       String[] allTasks = tasks.split("\\r?\\n");
       for (String task : allTasks) {
          // TODO: Enqueue the task to your Queue implementation:
-         
+         try{
+            dailyTaskQueue.enqueue(task);
+         }catch (QueueAllocationException | NullPointerException e){
+            System.out.println("Failed to enqueue task: " + e.getMessage());
+         }
       }
       // TODO: print out to the console the number of tasks in the queue:
-      
+      System.out.println("Number of tasks in the queue: " + dailyTaskQueue.size());
    }
 }
