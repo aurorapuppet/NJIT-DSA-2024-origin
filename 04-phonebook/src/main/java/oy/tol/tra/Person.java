@@ -39,28 +39,12 @@ public class Person implements Comparable<Person> {
      */
     @Override
     public int hashCode() {
-        int hash = 17;
-        hash = 31 * hash + firstNameHashCode();
-        hash = 31 * hash + lastNameHashCode();
+        int hash=0;
+        String fullName = getFullName();
+        for (int i = 0; i < fullName.length(); i++) {
+            hash=37*hash+fullName.charAt(i);
+        }
         return Math.abs(hash);
-    }
-
-    // Custom hash code calculation for the first name
-    private int firstNameHashCode() {
-        int hash = 0;
-        for (int i = 0; i < firstName.length(); i++) {
-            hash = 31 * hash + firstName.charAt(i);
-        }
-        return hash;
-    }
-
-    // Custom hash code calculation for the last name
-    private int lastNameHashCode() {
-        int hash = 0;
-        for (int i = 0; i < lastName.length(); i++) {
-            hash = 31 * hash + lastName.charAt(i);
-        }
-        return hash;
     }
 
     @Override
